@@ -7,9 +7,9 @@ Instead of keyword search, book-mcp uses vector embeddings to find books by *mea
 ## Features
 
 - Add books with metadata (title, author, genre, synopsis, status)
-- Semantic search across your library using natural language
+- Semantic search across the library using natural language
 - Filter by author, genre, or reading status (`wanting` / `reading` / `finished`)
-- Per-user book collections
+- Per-user book collections with token-based authentication
 - MCP tools, resources, and prompts for AI assistant integration
 
 ## Tech Stack
@@ -40,15 +40,48 @@ docker-compose up -d
 
 # 3. Install dependencies
 uv pip install -e .
+```
 
-# 4. Run the MCP server
-python main.py
+## User Management
+
+The server uses token-based auth. Each user gets a token stored in `.env.library` on the server side.
+
+```bash
+# Add a user and generate their token
+uv run python manage_tokens.py add <user_id>
+
+# List all users and tokens
+uv run python manage_tokens.py list
+
+# Revoke a user
+uv run python manage_tokens.py revoke <user_id>
 ```
 
 ## Add to Claude Code
 
+Each user sets their token in `.env`:
+
+```ini
+USER_TOKEN=<your-token>
+```
+
+Then reference it in `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "book-mcp": {
+      "command": "uv",
+      "args": ["--directory", "~/book-mcp", "run", "python", "main.py"]
+    }
+  }
+}
+```
+
+Or via the CLI:
+
 ```bash
-claude mcp add --transport stdio book-mcp -- uv run python /path/to/book-mcp/main.py
+claude mcp add --transport stdio book-mcp -- uv run --directory ~/book-mcp python main.py
 ```
 
 ## Project Structure
@@ -56,6 +89,7 @@ claude mcp add --transport stdio book-mcp -- uv run python /path/to/book-mcp/mai
 ```
 book-mcp/
 ├── main.py                        # Entry point — starts the MCP server
+├── manage_tokens.py               # CLI for managing user tokens
 ├── pyproject.toml
 ├── docker-compose.yml             # Qdrant service
 └── app/
@@ -63,8 +97,8 @@ book-mcp/
     ├── db/
     │   └── qdrant.py              # BookQdrant — vector DB interface
     └── mcp/
-        ├── server.py              # MCP server definition
-        ├── tools/                 # MCP tools (add, search, update, delete)
+        ├── server.py              # MCP server definition + auth
+        ├── tools/                 # MCP tools (add, search, update, delete, bookmarks)
         ├── resources/             # MCP resources (library, bookmarks)
         └── prompts/               # MCP prompts
 ```
