@@ -1,3 +1,7 @@
+from typing import Annotated
+
+from pydantic import Field
+
 from app.mcp.server import mcp
 from app.db.qdrant import BookQdrant
 
@@ -10,7 +14,7 @@ async def get_all_books():
 
 
 @mcp.resource("library://books/{title}")
-async def get_book(title: str):
+async def get_book(title: Annotated[str, Field(min_length=1, max_length=300)]):
     """Details of a single book from the library."""
     async with BookQdrant() as qdrant:
         return await qdrant.get_book(title=title)

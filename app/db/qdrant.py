@@ -1,3 +1,4 @@
+import os
 from uuid import uuid4
 
 from qdrant_client import AsyncQdrantClient
@@ -26,7 +27,7 @@ BOOKMARKS = "bookmarks"  # user-owned reading markers
 
 class BookQdrant:
     def __init__(self, host: str = "localhost", port: int = 6333):
-        self.client = AsyncQdrantClient(host=host, port=port)
+        self.client = AsyncQdrantClient(host=host, port=port, api_key=os.getenv("QDRANT_API_KEY"))
         self.embedder = Embedder()
 
     async def __aenter__(self):
