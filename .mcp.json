@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "book-mcp": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "~/book-mcp",
+        "run",
+        "python",
+        "main.py"
+      ]
+    }
+  }
+}

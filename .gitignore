@@ -37,3 +37,6 @@ qdrant_storage/
 .pytest_cache/
 htmlcov/
 .coverage
+
+
+*.log
