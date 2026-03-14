@@ -1,6 +1,10 @@
 # book-mcp
 
-An MCP (Model Context Protocol) server for managing and semantically searching your personal book collection.
+An MCP (Model Context Protocol) server for managing and semantically searching a book library.
+
+The idea is simple: there is one **shared library** containing all available books. Each user then maintains their own **bookmark list** — a personal reading list drawn from that library, with a status (`wanting`, `reading`, or `finished`) attached to each entry.
+
+The shared library is currently populated manually and can be expanded over time as new books are added.
 
 Instead of keyword search, book-mcp uses vector embeddings to find books by *meaning* — search for "a story about redemption in space" and get relevant results even if those words don't appear in the synopsis.
 
