@@ -103,10 +103,26 @@ book-mcp/
         └── prompts/               # MCP prompts
 ```
 
-## Book Status Values
+## Examples
 
-| Status | Meaning |
-|--------|---------|
-| `wanting` | On your wishlist |
-| `reading` | Currently reading |
-| `finished` | Done |
+Once connected, you can talk to Claude naturally:
+
+**Search the library**
+> "Find me a fantasy book about a chosen hero with political intrigue"
+
+**Add a book to the library**
+> "Add The Name of the Wind by Patrick Rothfuss — it's fantasy, and the synopsis is: a legendary wizard recounts his life story to a chronicler"
+
+**Bookmark a book**
+> "Add The Hobbit to my reading list"
+> "Mark A Game of Thrones as currently reading"
+
+**Search your own books**
+> "Which books on my list are about war or conflict?"
+
+**Update status**
+> "I finished The Hobbit, mark it as done"
+
+**Remove a bookmark**
+> "Remove The Way of Kings from my list"
+
