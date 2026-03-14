@@ -103,7 +103,9 @@ class BookQdrant:
     # -------------------------------------------------------------------------
 
     async def add_to_library(self, title: str, author: str, genre: str, synopsis: str) -> str | None:
-        """Add a book to the shared library. Returns the book_id."""
+        """Add a book to the shared library. Returns the book_id, or None if title already exists."""
+        if await self._resolve_library_id(title) is not None:
+            return None
         book_id = str(uuid4())
         result = await self.client.upsert(
             collection_name=LIBRARY,
@@ -191,11 +193,17 @@ class BookQdrant:
         return sorted({r.payload["author"] for r in results if r.payload.get("author")})
 
     async def delete_from_library(self, title: str) -> bool:
-        """Remove a book from the library."""
+        """Remove a book from the library and cascade-delete all user bookmarks for it."""
         book_id = await self._resolve_library_id(title)
         if book_id is None:
             return False
         await self.client.delete(collection_name=LIBRARY, points_selector=[book_id])
+        await self.client.delete(
+            collection_name=BOOKMARKS,
+            points_selector=Filter(must=[
+                FieldCondition(key="book_id", match=MatchValue(value=book_id)),
+            ]),
+        )
         return True
 
     async def update_text_embedding(self, title: str, text: str) -> bool:

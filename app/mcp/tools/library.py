@@ -25,8 +25,8 @@ async def add_book(
     async with BookQdrant() as qdrant:
         book_id = await qdrant.add_to_library(title=title, author=author, genre=genre, synopsis=synopsis)
     if book_id is None:
-        logger.error("add_book failed: title=%r", title)
-        raise ValueError(f"Failed to add '{title}' to the library.")
+        logger.warning("add_book duplicate: title=%r", title)
+        raise ValueError(f"'{title}' already exists in the library.")
     logger.info("add_book succeeded: book_id=%s", book_id)
     return f"Book '{title}' by {author} added to the library."
 
