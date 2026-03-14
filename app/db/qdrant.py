@@ -27,7 +27,7 @@ BOOKMARKS = "bookmarks"  # user-owned reading markers
 
 class BookQdrant:
     def __init__(self, host: str = "localhost", port: int = 6333):
-        self.client = AsyncQdrantClient(host=host, port=port, api_key=os.getenv("QDRANT_API_KEY"))
+        self.client = AsyncQdrantClient(host=host, port=port, api_key=os.getenv("QDRANT__SERVICE__API_KEY"), https=False)
         self.embedder = Embedder()
 
     async def __aenter__(self):
@@ -154,9 +154,9 @@ class BookQdrant:
             if value:
                 must_conditions.append(FieldCondition(key=field, match=MatchValue(value=value)))
 
-        results = await self.client.search(
+        results = await self.client.query(
             collection_name=LIBRARY,
-            query_vector=NamedVector(name=SYNOPSIS_VECTOR, vector=self.embedder.embed(query)),
+            query_text=NamedVector(name=SYNOPSIS_VECTOR, vector=self.embedder.embed(query)),
             query_filter=Filter(must=must_conditions) if must_conditions else None,
             limit=limit,
             with_payload=True,
@@ -298,9 +298,9 @@ class BookQdrant:
         book_ids = [b.payload["book_id"] for b in bookmarks]
         book_id_to_status = {b.payload["book_id"]: b.payload["status"] for b in bookmarks}
 
-        results = await self.client.search(
+        results = await self.client.query(
             collection_name=LIBRARY,
-            query_vector=NamedVector(name=SYNOPSIS_VECTOR, vector=self.embedder.embed(query)),
+            query_text=NamedVector(name=SYNOPSIS_VECTOR, vector=self.embedder.embed(query)),
             query_filter=Filter(must=[HasIdCondition(has_id=book_ids)]),
             limit=limit,
             with_payload=True,
